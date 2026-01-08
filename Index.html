@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator Quantum AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #e2e8f0;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Custom Animations */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 8s linear infinite;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        .glow-text-red {
+            text-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-emerald-500 selection:text-white flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900/50 backdrop-blur-md border-b border-slate-800 p-4 sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="cpu" class="text-emerald-500 w-5 h-5"></i>
+                <h1 class="text-lg font-bold tracking-tight text-white">
+                    AVIATOR <span class="text-emerald-500">QUANTUM AI</span>
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                
+                <!-- Auto Toggle Button -->
+                <button id="autoBtn" onclick="toggleAuto()" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all border bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-500">
+                    <i id="autoIcon" data-lucide="power" class="w-3 h-3"></i>
+                    <span id="autoText">AUTO: OFF</span>
+                </button>
+
+                <div class="hidden sm:flex items-center space-x-2 text-xs font-mono">
+                    <span class="flex items-center text-emerald-500">
+                        <i data-lucide="shield-check" class="w-3 h-3 mr-1"></i> VERIFIED
+                    </span>
+                    <span class="text-slate-500">v6.0.0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 md:p-6 space-y-6 w-full flex-grow">
+        
+        <!-- Status Bar -->
+        <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono mb-4">
+           <div class="bg-slate-900 border border-slate-800 p-2 rounded text-emerald-500">
+             SYNC: 0.04ms
+           </div>
+           <div class="bg-slate-900 border border-slate-800 p-2 rounded text-blue-400">
+             MODE: QUANTUM
+           </div>
+           <div class="bg-slate-900 border border-slate-800 p-2 rounded text-purple-400">
+             ACCURACY: 99.9%
+           </div>
+        </div>
+
+        <div class="grid md:grid-cols-12 gap-6">
+          
+            <!-- Main Predictor UI -->
+            <div class="md:col-span-7 space-y-6">
+                <div class="bg-slate-900 rounded-3xl p-1 border border-slate-800 shadow-2xl relative overflow-hidden group">
+                    
+                    <!-- Animated Gradient Border Effect -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-transparent to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none"></div>
+
+                    <div class="bg-black rounded-[20px] p-6 md:p-8 relative z-10 h-full flex flex-col items-center justify-between min-h-[400px]">
+                        
+                        <div class="w-full flex justify-between items-start mb-4">
+                           <div class="flex items-center space-x-1 bg-emerald-900/30 px-2 py-1 rounded text-[10px] text-emerald-400 border border-emerald-500/20">
+                              <i data-lucide="lock" class="w-3 h-3"></i>
+                              <span>ENCRYPTED V2</span>
+                           </div>
+                           <i data-lucide="activity" class="text-slate-700 w-6 h-6"></i>
+                        </div>
+
+                        <!-- Central Interaction Area -->
+                        <div class="relative w-64 h-64 flex items-center justify-center">
+                            
+                            <!-- Static Circles -->
+                            <div class="absolute inset-0 rounded-full border border-slate-800"></div>
+                            <div class="absolute inset-4 rounded-full border border-slate-800/50 border-dashed animate-spin-slow"></div>
+                            
+                            <!-- Content Container -->
+                            <div id="circleContent" class="flex flex-col items-center justify-center w-full h-full">
+                                <!-- Initial Start Button -->
+                                <button id="startBtn" onclick="generatePrediction()" class="group relative w-40 h-40 rounded-full bg-slate-900 border-2 border-slate-700 hover:border-emerald-500 transition-all duration-300 flex flex-col items-center justify-center overflow-hidden">
+                                    <div class="absolute inset-0 bg-emerald-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></div>
+                                    <i data-lucide="zap" class="w-8 h-8 mb-2 text-slate-400 group-hover:text-emerald-500 transition-colors"></i>
+                                    <span class="text-slate-300 font-bold tracking-widest group-hover:text-white">START</span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- Footer Status -->
+                        <div class="w-full mt-4 pt-4 border-t border-slate-800">
+                            <div class="flex justify-between text-xs font-mono text-slate-500">
+                                <span id="patternText">WAITING FOR INPUT...</span>
+                                <span id="statusText">READY</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar / History Log -->
+            <div class="md:col-span-5 space-y-4">
+                
+                <!-- Fake Neural Load Graph -->
+                <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                   <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3 flex items-center">
+                     <i data-lucide="cpu" class="w-3 h-3 mr-2"></i> Neural Network Load
+                   </h3>
+                   <div class="flex items-end space-x-1 h-16" id="barsContainer">
+                      <!-- Bars generated by JS -->
+                   </div>
+                </div>
+
+                <!-- History List -->
+                <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex flex-col h-[300px]">
+                    <div class="p-4 border-b border-slate-800 bg-slate-900/50">
+                        <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider flex items-center justify-between">
+                            <span>Smart Signals</span>
+                            <span class="text-emerald-500 flex items-center"><span class="w-2 h-2 bg-emerald-500 rounded-full mr-1 animate-pulse"></span> LIVE</span>
+                        </h3>
+                    </div>
+                    <div id="historyList" class="flex-1 overflow-y-auto p-2 space-y-2">
+                        <!-- History Items injected here -->
+                    </div>
+                </div>
+
+                <div class="bg-amber-500/10 rounded-lg p-3 border border-amber-500/20">
+                   <p class="text-[10px] text-amber-500/80 leading-relaxed text-center">
+                     <strong>SIMULATION DISCLAIMER:</strong> This is a demonstration interface. All data (wins, signals, odds) is generated randomly.
+                   </p>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- State Management ---
+        let isCalculating = false;
+        let isAuto = false;
+        let history = [
+            { id: 1, time: '14:20:15', odds: '2.45x', status: 'WIN', type: 'SAFE' },
+            { id: 2, time: '14:18:30', odds: '12.12x', status: 'WIN', type: 'JACKPOT' },
+            { id: 3, time: '14:15:45', odds: 'SKIP', status: 'SKIPPED', type: 'AVOID' }
+        ];
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHistory();
+            generateBars();
+            lucide.createIcons();
+        });
+
+        // --- DOM Elements ---
+        const circleContent = document.getElementById('circleContent');
+        const patternText = document.getElementById('patternText');
+        const statusText = document.getElementById('statusText');
+        const autoBtn = document.getElementById('autoBtn');
+        const autoText = document.getElementById('autoText');
+        const historyList = document.getElementById('historyList');
+
+        // --- Functions ---
+
+        function toggleAuto() {
+            isAuto = !isAuto;
+            
+            // Update UI
+            if (isAuto) {
+                autoBtn.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all border bg-emerald-500/20 text-emerald-400 border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]";
+                autoBtn.innerHTML = `<i data-lucide="activity" class="w-3 h-3 animate-pulse"></i><span>AUTO: ON</span>`;
+                if (!isCalculating) generatePrediction();
+            } else {
+                autoBtn.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all border bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-500";
+                autoBtn.innerHTML = `<i data-lucide="power" class="w-3 h-3"></i><span>AUTO: OFF</span>`;
+            }
+            lucide.createIcons();
+        }
+
+        function generatePrediction() {
+            if (isCalculating) return;
+            
+            isCalculating = true;
+            updateStatusUI("processing");
+
+            // Show Spinner
+            circleContent.innerHTML = `
+                <div class="text-center space-y-3">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-t-emerald-500 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+                    </div>
+                    <div class="font-mono text-emerald-500 text-sm animate-pulse">CALIBRATING...</div>
+                </div>
+            `;
+            patternText.innerText = "SCANNING SERVER HASH...";
+
+            // Simulation Delay (2.5s)
+            setTimeout(() => {
+                const now = new Date();
+                const randomSeconds = Math.floor(Math.random() * 25) + 15;
+                now.setSeconds(now.getSeconds() + randomSeconds);
+                
+                const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                const confidence = (Math.random() * (100.00 - 99.10) + 99.10).toFixed(2);
+                
+                // Patterns
+                const patterns = ["FIBONACCI RETRACEMENT", "LOW VOLATILITY ENTRY", "SERVER SEED MATCH", "MOMENTUM SPIKE"];
+                const detectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+                patternText.innerText = detectedPattern;
+
+                // Decision Logic
+                const shouldSkip = Math.random() < 0.15; // 15% Skip chance
+                let odds, type, isSkip;
+
+                if (shouldSkip) {
+                    odds = "SKIP";
+                    type = "AVOID";
+                    isSkip = true;
+                } else {
+                    isSkip = false;
+                    // 25% chance of High odd
+                    if (Math.random() > 0.75) {
+                        odds = (Math.random() * (25.00 - 10.00) + 10.00).toFixed(2) + "x";
+                        type = "JACKPOT";
+                    } else {
+                        odds = (Math.random() * (3.50 - 1.90) + 1.90).toFixed(2) + "x";
+                        type = "SAFE";
+                    }
+                }
+
+                // Render Result
+                if (isSkip) {
+                    circleContent.innerHTML = `
+                        <div class="text-center animate-in zoom-in duration-300">
+                            <div class="text-slate-500 text-xs font-mono mb-1">TARGET TIME</div>
+                            <div class="text-5xl font-mono font-bold text-white tracking-tighter mb-4">${timeStr}</div>
+                            <div class="flex flex-col items-center">
+                                <div class="text-rose-500 font-black text-4xl glow-text-red">DO NOT BET</div>
+                                <div class="mt-2 text-rose-400 text-xs font-mono">UNSTABLE ROUND DETECTED</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    circleContent.innerHTML = `
+                        <div class="text-center animate-in zoom-in duration-300">
+                            <div class="text-slate-500 text-xs font-mono mb-1">TARGET TIME</div>
+                            <div class="text-5xl font-mono font-bold text-white tracking-tighter mb-4">${timeStr}</div>
+                            <div class="flex flex-col items-center">
+                                <div class="text-emerald-500 font-black text-6xl glow-text">${odds}</div>
+                                <div class="mt-2 px-3 py-1 bg-emerald-900/30 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold tracking-wider">
+                                    CONFIDENCE: ${confidence}%
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Add to History
+                const newId = Date.now();
+                const newItem = { id: newId, time: timeStr, odds: odds, status: isSkip ? 'SKIPPED' : 'PENDING', type: type };
+                history.unshift(newItem);
+                if(history.length > 20) history.pop();
+                renderHistory();
+
+                isCalculating = false;
+                updateStatusUI("ready");
+
+                // Win Simulation Delay (5s)
+                if (!isSkip) {
+                    setTimeout(() => {
+                        const itemIndex = history.findIndex(i => i.id === newId);
+                        if (itemIndex !== -1) {
+                            history[itemIndex].status = 'WIN';
+                            renderHistory();
+                        }
+                    }, 5000);
+                }
+
+                // Auto Mode Recursion
+                if (isAuto) {
+                    // Start Button UI must show disabled
+                    const nextRunDelay = randomSeconds * 1000 + 2000; // Wait for time to pass + buffer
+                    setTimeout(() => {
+                        if (isAuto) generatePrediction();
+                    }, nextRunDelay);
+                } else {
+                    // Re-enable Start Button after a short cooldown if not auto
+                    setTimeout(() => {
+                         if (!isCalculating && !isAuto) resetCircleUI(); 
+                    }, 4000);
+                }
+
+            }, 2500);
+        }
+
+        function resetCircleUI() {
+            circleContent.innerHTML = `
+                <button id="startBtn" onclick="generatePrediction()" class="group relative w-40 h-40 rounded-full bg-slate-900 border-2 border-slate-700 hover:border-emerald-500 transition-all duration-300 flex flex-col items-center justify-center overflow-hidden">
+                    <div class="absolute inset-0 bg-emerald-500/10 scale-0 group-hover:scale-100 rounded-full transition-transform duration-300"></div>
+                    <i data-lucide="zap" class="w-8 h-8 mb-2 text-slate-400 group-hover:text-emerald-500 transition-colors"></i>
+                    <span class="text-slate-300 font-bold tracking-widest group-hover:text-white">START</span>
+                </button>
+            `;
+            lucide.createIcons();
+            patternText.innerText = "WAITING FOR INPUT...";
+        }
+
+        function updateStatusUI(state) {
+            if (state === "processing") {
+                statusText.className = "text-yellow-500";
+                statusText.innerText = "PROCESSING";
+            } else if (state === "ready") {
+                if (isAuto) {
+                    statusText.className = "text-emerald-500 animate-pulse";
+                    statusText.innerText = "AUTO RUNNING";
+                } else {
+                    statusText.className = "text-slate-500";
+                    statusText.innerText = "READY";
+                }
+            }
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = history.map(item => {
+                let statusDotClass = item.status === 'WIN' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : (item.status === 'SKIPPED' ? 'bg-slate-500' : 'bg-yellow-500 animate-pulse');
+                let textClass = item.type === 'JACKPOT' ? 'text-purple-400' : (item.type === 'AVOID' ? 'text-slate-500 italic' : 'text-white');
+                let icon = '';
+                if(item.status === 'WIN') icon = `<i data-lucide="check-circle" class="w-3 h-3 text-emerald-500"></i>`;
+                if(item.status === 'SKIPPED') icon = `<i data-lucide="shield-check" class="w-3 h-3 text-slate-500"></i>`;
+
+                return `
+                    <div class="flex items-center justify-between p-3 bg-black/40 rounded border border-slate-800 hover:border-slate-700 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-2 h-2 rounded-full ${statusDotClass}"></div>
+                            <span class="font-mono text-sm text-slate-300">${item.time}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="font-bold font-mono ${textClass}">${item.odds}</span>
+                            ${icon}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function generateBars() {
+            const container = document.getElementById('barsContainer');
+            const heights = [40, 65, 45, 80, 55, 90, 75, 85, 95, 88];
+            container.innerHTML = heights.map(h => `
+                <div class="flex-1 bg-purple-500/20 rounded-t-sm relative overflow-hidden group" style="height: ${h}%">
+                    <div class="absolute bottom-0 left-0 right-0 bg-purple-500 h-full opacity-50 group-hover:opacity-80 transition-opacity animate-pulse"></div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
+
